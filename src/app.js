@@ -62,15 +62,20 @@ async function app() {
   } catch (e) { console.log(e); }
 
 
-  // set parking brake
+  // rudimentary way of toggling the parking break
   try {
-	console.log("setting parking brake..");
+	console.log("toggling parking brake..");
 	const response = await hmkit.telematics.sendCommand(
 		vehicleSerial,
-		hmkit.commands.ParkingBrakeCommand.activate()
+		hmkit.commands.ParkingBrakeCommand.getState()
 	);
 	var carParkingBrake = response.parse();
-	console.log('parking break: ' + carParkingBrake.parkingBrake);
+	console.log("current status: " + carParkingBrake.parkingBrake);
+	if (carParkingBrake.parkingBrake == 'active')
+		hmkit.commands.ParkingBrakeCommand.inactivate();
+	else
+		hmkit.commands.ParkingBrakeCommand.activate();
+	console.log("parking brake status is now: " + carParkingBrake.parkingBrake);
   } catch (e) { console.log(e); }
 
 
@@ -83,5 +88,5 @@ async function app() {
 
 
 
-// Run your app
+// run the app
 app();
